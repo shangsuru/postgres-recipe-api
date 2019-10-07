@@ -1,10 +1,12 @@
+const { user, host, database, password, port } = require("./config");
+
 const Pool = require("pg").Pool;
 const pool = new Pool({
-  user: "henry",
-  host: "localhost",
-  database: "cook",
-  password: "fbischß$3",
-  port: 5432
+  user,
+  host,
+  database,
+  password,
+  port
 });
 
 const getRecipes = (request, response) => {
