@@ -10,7 +10,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.get("/recipes", db.getRecipes);
-app.post("/recipes", db.createRecipe)
+app.get("/recipes/:title", db.getRecipeDetails)
+app.post("/recipes", db.createRecipe);
 
 app.listen(port, () => {
   console.log(`App running on port ${port}.`);

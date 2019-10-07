@@ -10,7 +10,22 @@ const pool = new Pool({
 const getRecipes = (request, response) => {
   const query = request.query.q;
   pool.query(
-    "select * from recipes where title like $1", ['%' + query + '%'],
+    "select title, rating, recipe_img, prep_time from recipes where title like $1",
+    ["%" + query + "%"],
+    (error, results) => {
+      if (error) {
+        throw error;
+      }
+      response.status(200).json(results.rows);
+    }
+  );
+};
+
+const getRecipeDetails = (request, response) => {
+  const title = request.params.title;
+  pool.query(
+    "select * from recipes where title=$1",
+    [title],
     (error, results) => {
       if (error) {
         throw error;
@@ -54,4 +69,4 @@ const createRecipe = (request, response) => {
   );
 };
 
-module.exports = { getRecipes, createRecipe };
+module.exports = { getRecipes, createRecipe, getRecipeDetails };
