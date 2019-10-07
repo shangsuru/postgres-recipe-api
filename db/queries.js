@@ -16,7 +16,7 @@ const getRecipes = (request, response) => {
     ["%" + query + "%"],
     (error, results) => {
       if (error) {
-        throw error;
+        console.log(error);
       }
       response.status(200).json(results.rows);
     }
@@ -30,7 +30,7 @@ const getRecipeDetails = (request, response) => {
     [title],
     (error, results) => {
       if (error) {
-        throw error;
+        console.log(error);
       }
       response.status(200).json(results.rows);
     }
@@ -38,17 +38,10 @@ const getRecipeDetails = (request, response) => {
 };
 
 const createRecipe = (request, response) => {
-  const {
-    title,
-    instructions,
-    recipe_img,
-    author,
-    prep_time,
-    ingredients
-  } = request.body;
+  const { title, instructions, author, prep_time, ingredients } = request.body;
   pool.query(
-    "insert into recipes (title, instructions, recipe_img, author, prep_time) values ($1, $2, $3, $4, $5)",
-    [title, instructions, recipe_img, author, prep_time],
+    "insert into recipes (title, instructions, author, prep_time) values ($1, $2, $3, $4, $5)",
+    [title, instructions, author, prep_time],
     (error, results) => {
       if (error) {
         console.log(error);
@@ -71,4 +64,20 @@ const createRecipe = (request, response) => {
   );
 };
 
-module.exports = { getRecipes, createRecipe, getRecipeDetails };
+const addPicture = (request, response) => {
+  const imageName = request.file.filename;
+  const recipeTitle = request.query.recipe;
+  pool.query(
+    "update recipes set recipe_img = $1 where title = $2",
+    [imageName, recipeTitle],
+    (error, results) => {
+      if (error) {
+        console.log(error);
+      }
+
+      response.status(201).send("picture added");
+    }
+  );
+};
+
+module.exports = { getRecipes, createRecipe, getRecipeDetails, addPicture };
