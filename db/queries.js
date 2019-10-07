@@ -1,0 +1,57 @@
+const Pool = require("pg").Pool;
+const pool = new Pool({
+  user: "henry",
+  host: "localhost",
+  database: "cook",
+  password: "fbischß$3",
+  port: 5432
+});
+
+const getRecipes = (request, response) => {
+  const query = request.query.q;
+  pool.query(
+    "select * from recipes where title like $1", ['%' + query + '%'],
+    (error, results) => {
+      if (error) {
+        throw error;
+      }
+      response.status(200).json(results.rows);
+    }
+  );
+};
+
+const createRecipe = (request, response) => {
+  const {
+    title,
+    instructions,
+    recipe_img,
+    author,
+    prep_time,
+    ingredients
+  } = request.body;
+  pool.query(
+    "insert into recipes (title, instructions, recipe_img, author, prep_time) values ($1, $2, $3, $4, $5)",
+    [title, instructions, recipe_img, author, prep_time],
+    (error, results) => {
+      if (error) {
+        console.log(error);
+      }
+
+      for (let i = 0; i < ingredients.length; i++) {
+        pool.query(
+          "insert into ingredients (title, ingredient, amount) values ($1, $2, $3)",
+          [title, ingredients[i].ingredient, ingredients[i].amount],
+          (error, results) => {
+            if (error) {
+              console.log(error);
+            }
+          }
+        );
+      }
+
+      response.status(201).send(`Recipe added`);
+    }
+  );
+};
+
+module.exports = { getRecipes, createRecipe };
