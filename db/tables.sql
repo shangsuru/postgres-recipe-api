@@ -1,5 +1,5 @@
 create table if not exists recipes (
-  title text primary key,
+  recipe_name text primary key,
   rating integer default 0,
   instructions text,
   recipe_img text,
@@ -8,8 +8,7 @@ create table if not exists recipes (
 );
 
 create table if not exists ingredients (
-  title text references recipes(title) on delete cascade,
+  recipe_name text references recipes(recipe_name) on delete cascade,
   ingredient text,
-  amount text,
-  primary key (title, ingredient)
+  primary key (recipe_name, ingredient)
 );
