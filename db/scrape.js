@@ -55,11 +55,13 @@ function extractDataFromRecipe(address) {
     if (!error && response.statusCode === 200) {
       let $ = cheerio.load(html);
 
-      const recipe_name = $("#recipe-main-content").text();
+      const recipe_name = $("h1")
+        .first()
+        .text();
       const instructions = $(".step")
         .text()
         .replace(/\s\s+/g, "");
-      const recipe_img = $(".rec-photo").attr("src");
+      const recipe_img = $("img.rec-photo").attr("src");
       const author = $(".submitter__name").text();
       const prep_time = $(
         "time[itemprop='totalTime'] span.prepTime__item--time"
@@ -68,18 +70,26 @@ function extractDataFromRecipe(address) {
       $("span[itemprop='recipeIngredient']").each(function(index) {
         ingredients.push($(this).text());
       });
-    }
 
-    generateSql(
-      recipe_name,
-      instructions,
-      recipe_img,
-      author,
-      prep_time,
-      ingredients
-    );
+      console.log("Name: " + recipe_name);
+      console.log("Instructions: " + instructions);
+      console.log("Image: " + recipe_img);
+      console.log("Author: " + author);
+      console.log("Time: " + prep_time);
+      console.log("Ingredients: " + ingredients);
+
+      // generateSql(
+      //   recipe_name,
+      //   instructions,
+      //   recipe_img,
+      //   author,
+      //   prep_time,
+      //   ingredients
+      // );
+    }
   });
 }
 
-getRecipeData();
-
+extractDataFromRecipe(
+  "https://www.allrecipes.com/recipe/17066/janets-rich-banana-bread/?internalSource=previously%20viewed&referringContentType=Homepage&clickId=cardslot%2090"
+);
