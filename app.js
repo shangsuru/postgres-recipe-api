@@ -4,7 +4,6 @@ const bodyParser = require("body-parser");
 const db = require("./db/queries");
 const port = 3050;
 const multer = require("multer");
-const routes = require("./routes/routes");
 
 var storage = multer.diskStorage({
   destination: function(req, file, cb) {
@@ -28,10 +27,15 @@ var upload = multer({
   }
 });
 
+app.get("/recipes", db.getRecipes);
+app.get("/recipes/:title", db.getRecipeDetails);
+app.get("/recipes/category/:category", db.getRecipesInCategory);
+app.post("/recipes", db.createRecipe);
+app.post("/recipes/image", upload.single("upload"), db.addPicture);
+
 app.use(express.static("public"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-routes(app);
 
 app.listen(port, () => {
   console.log(`App running on port ${port}.`);

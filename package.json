@@ -4,7 +4,12 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "client-install": "cd client && npm install",
+    "start": "node app.js",
+    "server": "nodemon app.js",
+    "client": "npm start --prefix client",
+    "dev": "concurrently \"npm run server\" \"npm run client\""
   },
   "author": "Henry Helm",
   "license": "ISC",
@@ -15,6 +20,7 @@
   },
   "devDependencies": {
     "cheerio": "^1.0.0-rc.3",
+    "concurrently": "^5.0.0",
     "fs": "0.0.1-security",
     "request": "^2.88.0"
   }

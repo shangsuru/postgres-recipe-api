@@ -32,22 +32,35 @@ const getRecipeDetails = (request, response) => {
       if (error) {
         throw error;
       }
-      response.status(200).json(results.rows);
+      let recipe = results.rows[0];
+      pool.query(
+        "select ingredient from ingredients where recipe_name = $1",
+        [title],
+        (error, results) => {
+          if (error) {
+            throw error;
+          }
+          let ingredientsList = [];
+          results.rows.forEach(e => ingredientsList.push(e.ingredient));
+          recipe["ingredients"] = ingredientsList;
+          response.status(200).json(recipe);
+        }
+      );
     }
   );
 };
 
-const getRecipeInCategory = (request, response) => {
+const getRecipesInCategory = (request, response) => {
   const category = request.params.category;
   pool.query(
     "select recipe_name, rating, recipe_img, prep_time from recipes where category = $1",
     [category],
-    (error, results => {
+    (error, results) => {
       if (error) {
         throw error;
       }
       response.status(200).json(results.rows);
-    })
+    }
   );
 };
 
@@ -103,7 +116,7 @@ const addPicture = (request, response) => {
 module.exports = {
   getRecipes,
   getRecipeDetails,
-  getRecipeInCategory,
+  getRecipesInCategory,
   createRecipe,
   addPicture
 };
