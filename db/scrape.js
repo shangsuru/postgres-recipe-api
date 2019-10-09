@@ -2,7 +2,8 @@ const cheerio = require("cheerio");
 const fs = require("fs");
 const request = require("request");
 
-const FILE = "data.sql";
+const FILE = `data/${process.argv[2]}.sql`;
+
 const BREAKFAST = "https://www.allrecipes.com/recipes/78/breakfast-and-brunch/";
 const DESSERTS = "https://www.allrecipes.com/recipes/79/desserts/";
 const DINNER = "https://www.allrecipes.com/recipes/17562/dinner/";
@@ -19,8 +20,7 @@ function getRecipeData(category, address) {
         // follow each link to a single recipe
         $("h3.fixed-recipe-card__h3 a").each(function(index) {
           const linkToRecipe = $(this).attr("href");
-          console.log(linkToRecipe);
-          //extractDataFromRecipe(category, linkToRecipe);
+          extractDataFromRecipe(category, linkToRecipe);
         });
       }
       console.log(error)
@@ -39,28 +39,19 @@ function extractDataFromRecipe(category, address) {
 
       const recipe_name = $("h1")
         .first()
-        .text();
+        .text().replace("'", "");
       const instructions = $(".step")
         .text()
-        .replace(/\s\s+/g, "");
+        .replace(/\s\s+/g, "").replace("'", "");
       const recipe_img = $("img.rec-photo").attr("src");
-      const author = $(".submitter__name").text();
+      const author = $(".submitter__name").text().replace("'", "");
       const prep_time = $(
         "time[itemprop='totalTime'] span.prepTime__item--time"
       ).text();
       const ingredients = [];
       $("span[itemprop='recipeIngredient']").each(function(index) {
-        ingredients.push($(this).text());
+        ingredients.push($(this).text().replace("'", ""));
       });
-
-      //console.log("Name: " + recipe_name);
-      // console.log("Instructions: " + instructions);
-      // console.log("Image: " + recipe_img);
-      // console.log("Author: " + author);
-      // console.log("Time: " + prep_time);
-      // console.log("Category: " + category);
-      // console.log("Ingredients: " + ingredients);
-      // console.log();
 
       generateSql(
         recipe_name,
@@ -88,7 +79,7 @@ function generateSql(
   fs.appendFileSync(
     FILE,
     `\ninsert into recipes (recipe_name, instructions, recipe_img, author, prep_time, category)
-     values ('${recipe_name}', '${instructions}', '${recipe_img}', '${author}', '${prep_time}', '${category});`
+     values ('${recipe_name}', '${instructions}', '${recipe_img}', '${author}', '${prep_time}', '${category}');`
   );
 
   ingredients.forEach(ingredient => {
@@ -99,8 +90,4 @@ function generateSql(
   });
 }
 
-getRecipeData("breakfast", BREAKFAST);
-getRecipeData("desserts", DESSERTS);
-getRecipeData("dinner", DINNER);
-getRecipeData("drinks", DRINKS);
-getRecipeData("snacks", SNACKS);
+getRecipeData(process.argv[3], process.argv[4])
