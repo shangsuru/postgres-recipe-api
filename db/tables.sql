@@ -4,7 +4,8 @@ create table if not exists recipes (
   instructions text,
   recipe_img text,
   author text,
-  prep_time integer
+  prep_time integer,
+  category text
 );
 
 create table if not exists ingredients (
