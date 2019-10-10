@@ -51,7 +51,7 @@ const getRecipeDetails = (request, response) => {
 
 const getRecipesInCategory = (request, response) => {
   const category = request.params.category;
-  const offset = request.query.page - 1;
+  const offset = (request.query.page - 1) * 15;
   pool.query(
     "select recipe_name, rating, recipe_img, prep_time from recipes where category = $1 order by rating desc limit 15 offset $2",
     [category, offset],
