@@ -9,6 +9,15 @@ const pool = new Pool({
   port
 });
 
+// const getRecipes = (request, response) => {
+//   pool.query("select recipe_name, rating, recipe_img, prep_time, category from recipes", (error, results) => {
+//     if (error) {
+//       throw error;
+//     }
+//     response.status(200).json(results.rows);
+//   });
+// };
+
 const getRecipes = (request, response) => {
   const query = request.query.q;
   pool.query(
@@ -53,7 +62,7 @@ const getRecipeDetails = (request, response) => {
 const getRecipesInCategory = (request, response) => {
   const category = request.params.category;
   pool.query(
-    "select recipe_name, rating, recipe_img, prep_time from recipes where category = $1",
+    "select recipe_name, rating, recipe_img, prep_time from recipes where category = $1 limit 10",
     [category],
     (error, results) => {
       if (error) {

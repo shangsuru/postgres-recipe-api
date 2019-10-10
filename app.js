@@ -2,8 +2,11 @@ const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
 const db = require("./db/queries");
+const cors = require("cors");
 const port = 3050;
 const multer = require("multer");
+
+app.use(cors());
 
 var storage = multer.diskStorage({
   destination: function(req, file, cb) {
