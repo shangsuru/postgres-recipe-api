@@ -1,12 +1,13 @@
-const { user, host, database, password, port } = require("./config");
+//const { user, host, database, password, port } = require("./config");
+require("dotenv").config();
 
 const Pool = require("pg").Pool;
 const pool = new Pool({
-  user,
-  host,
-  database,
-  password,
-  port
+  user: process.env.DB_USER,
+  host: process.env.DB_HOST,
+  database: process.env.DB_DATABASE,
+  password: process.env.DB_PASSWORD,
+  port: process.env.DB_PORT
 });
 
 // const getRecipes = (request, response) => {

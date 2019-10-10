@@ -3,7 +3,6 @@ const app = express();
 const bodyParser = require("body-parser");
 const db = require("./db/queries");
 const cors = require("cors");
-const port = 3050;
 const multer = require("multer");
 
 app.use(cors());
@@ -40,6 +39,6 @@ app.use(express.static("public"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.listen(port, () => {
-  console.log(`App running on port ${port}.`);
+app.listen(process.env.PORT || 3050, () => {
+  console.log("Server listening");
 });
