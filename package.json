@@ -4,15 +4,12 @@
   "description": "",
   "main": "app.js",
   "engines": {
-    "node": "12.9.1"
+    "node": "12.9.1",
+    "npm": "6.11.3"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "client-install": "cd client && npm install",
-    "start": "node app.js",
-    "server": "nodemon app.js",
-    "client": "npm start --prefix client",
-    "dev": "concurrently \"npm run server\" \"npm run client\""
+    "start": "node app.js"
   },
   "author": "Henry Helm",
   "license": "ISC",

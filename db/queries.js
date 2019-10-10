@@ -1,23 +1,12 @@
-//const { user, host, database, password, port } = require("./config");
 require("dotenv").config();
+
+const isProduction = process.env.NODE_ENV === "production";
+const connectionString = `postgresql://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_DATABASE}`;
 
 const Pool = require("pg").Pool;
 const pool = new Pool({
-  user: process.env.DB_USER,
-  host: process.env.DB_HOST,
-  database: process.env.DB_DATABASE,
-  password: process.env.DB_PASSWORD,
-  port: process.env.DB_PORT
+  connectionString: isProduction ? process.env.DATABASE_URL : connectionString
 });
-
-// const getRecipes = (request, response) => {
-//   pool.query("select recipe_name, rating, recipe_img, prep_time, category from recipes", (error, results) => {
-//     if (error) {
-//       throw error;
-//     }
-//     response.status(200).json(results.rows);
-//   });
-// };
 
 const getRecipes = (request, response) => {
   const query = request.query.q;
