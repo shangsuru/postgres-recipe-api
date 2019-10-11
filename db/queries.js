@@ -11,7 +11,7 @@ const pool = new Pool({
 const getRecipes = (request, response) => {
   const query = request.query.q
   pool.query(
-    'select recipe_name, rating, recipe_img, prep_time from recipes where recipe_name like $1',
+    'select recipe_name, rating, recipe_img, prep_time from recipes where lower(recipe_name) like lower($1)',
     ['%' + query + '%'],
     (error, results) => {
       if (error) {
