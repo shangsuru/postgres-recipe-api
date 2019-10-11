@@ -14,9 +14,7 @@ const getRecipes = (request, response) => {
     "select recipe_name, rating, recipe_img, prep_time from recipes where recipe_name like $1",
     ["%" + query + "%"],
     (error, results) => {
-      if (error) {
-        throw error;
-      }
+      if (!error) {
       response.status(200).json(results.rows);
     }
   );
@@ -28,17 +26,13 @@ const getRecipeDetails = (request, response) => {
     "select * from recipes where recipe_name = $1",
     [title],
     (error, results) => {
-      if (error) {
-        throw error;
-      }
+      if (!error) {
       let recipe = results.rows[0];
       pool.query(
         "select ingredient from ingredients where recipe_name = $1",
         [title],
         (error, results) => {
-          if (error) {
-            throw error;
-          }
+          if (!error) {
           let ingredientsList = [];
           results.rows.forEach(e => ingredientsList.push(e.ingredient));
           recipe["ingredients"] = ingredientsList;
@@ -56,9 +50,7 @@ const getRecipesInCategory = (request, response) => {
     "select recipe_name, rating, recipe_img, prep_time from recipes where category = $1 limit 15 offset $2",
     [category, offset],
     (error, results) => {
-      if (error) {
-        throw error;
-      }
+      if (!error) {
       response.status(200).json(results.rows);
     }
   );
@@ -76,10 +68,7 @@ const createRecipe = (request, response) => {
     "insert into recipes (recipe_name, instructions, author, prep_time) values ($1, $2, $3, $4, $5)",
     [recipe_name, instructions, author, prep_time],
     (error, results) => {
-      if (error) {
-        throw error;
-      }
-
+      if (!error) {
       for (let i = 0; i < ingredients.length; i++) {
         pool.query(
           "insert into ingredients (recipe_name, ingredient, amount) values ($1, $2, $3)",
@@ -104,10 +93,7 @@ const addPicture = (request, response) => {
     "update recipes set recipe_img = $1 where recipe_name = $2",
     [imageName, recipeTitle],
     (error, results) => {
-      if (error) {
-        throw error;
-      }
-
+      if (!error) {
       response.status(201).send("picture added");
     }
   );
