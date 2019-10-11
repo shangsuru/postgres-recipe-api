@@ -10,9 +10,10 @@ const pool = new Pool({
 
 const getRecipes = (request, response) => {
   const query = request.query.q
+  const offset = (request.query.page - 1) * 15
   pool.query(
-    'select recipe_name, rating, recipe_img, prep_time from recipes where lower(recipe_name) like lower($1)',
-    ['%' + query + '%'],
+    'select recipe_name, rating, recipe_img, prep_time from recipes where lower(recipe_name) like lower($1) limit 15 offset $2',
+    ['%' + query + '%', offset],
     (error, results) => {
       if (error) {
         console.log(error)
