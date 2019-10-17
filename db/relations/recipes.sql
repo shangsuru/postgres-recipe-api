@@ -3,7 +3,7 @@ create table if not exists recipes (
   rating integer default 0,
   instructions text,
   recipe_img text,
-  author text,
+  author varchar(60) references users(username) on delete cascade,
   prep_time integer,
   category text
 );
