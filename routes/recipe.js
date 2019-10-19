@@ -1,14 +1,31 @@
-require('dotenv').config()
+const express = require('express')
+const multer = require('multer')
+const pool = require('../db/connection')
+const router = new express.Router()
 
-const isProduction = process.env.NODE_ENV === 'production'
-const connectionString = `postgresql://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_DATABASE}`
-
-const Pool = require('pg').Pool
-const pool = new Pool({
-  connectionString: isProduction ? process.env.DATABASE_URL : connectionString
+var storage = multer.diskStorage({
+  destination: function(req, file, cb) {
+    cb(null, 'public/images')
+  },
+  filename: function(req, file, cb) {
+    cb(null, Date.now() + '.jpg')
+  }
 })
 
-const getRecipes = (request, response) => {
+var upload = multer({
+  storage: storage,
+  limits: {
+    fileSize: 1000000
+  },
+  fileFilter(req, file, cb) {
+    if (!file.originalname.match(/\.(jpg|png|jpeg)$/)) {
+      return cb(new Error('Please upload an image'))
+    }
+    cb(undefined, true)
+  }
+})
+
+router.get('/', (request, response) => {
   const query = request.query.q
   const offset = (request.query.page - 1) * 15
   pool.query(
@@ -22,9 +39,9 @@ const getRecipes = (request, response) => {
       }
     }
   )
-}
+})
 
-const getRecipeDetails = (request, response) => {
+router.get('/:title', (request, response) => {
   const title = request.params.title
   pool.query(
     'select * from recipes where recipe_name = $1',
@@ -51,9 +68,9 @@ const getRecipeDetails = (request, response) => {
       }
     }
   )
-}
+})
 
-const getRecipesInCategory = (request, response) => {
+router.get('/category/:category', (request, response) => {
   const category = request.params.category
   const offset = (request.query.page - 1) * 15
   pool.query(
@@ -67,9 +84,9 @@ const getRecipesInCategory = (request, response) => {
       }
     }
   )
-}
+})
 
-const createRecipe = (request, response) => {
+router.post('/recipes', (request, response) => {
   const {
     recipe_name,
     instructions,
@@ -100,9 +117,9 @@ const createRecipe = (request, response) => {
       }
     }
   )
-}
+})
 
-const addPicture = (request, response) => {
+router.post('/image', upload.single('upload'), (request, response) => {
   const imageName = request.file.filename
   const recipeTitle = request.query.recipe
   pool.query(
@@ -116,12 +133,6 @@ const addPicture = (request, response) => {
       }
     }
   )
-}
+})
 
-module.exports = {
-  getRecipes,
-  getRecipeDetails,
-  getRecipesInCategory,
-  createRecipe,
-  addPicture
-}
+module.exports = router
