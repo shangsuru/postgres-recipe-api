@@ -406,3 +406,9 @@ insert into users values ('RainbowJewels', '$2a$08$l47Nky/H0S42GquHHxg8P.XN.fXqN
 insert into users values ('Traci (TJ)', '$2a$08$l47Nky/H0S42GquHHxg8P.XN.fXqNHQUCbwg.5ZA5w9wlNJ8QWmbe');
 insert into users values ('mamaiscookin', '$2a$08$l47Nky/H0S42GquHHxg8P.XN.fXqNHQUCbwg.5ZA5w9wlNJ8QWmbe');
 insert into users values ('ETHELMERTZ', '$2a$08$l47Nky/H0S42GquHHxg8P.XN.fXqNHQUCbwg.5ZA5w9wlNJ8QWmbe');
+
+insert into favorites values ('Phoebe', 'Uglies');
+insert into favorites values ('Phoebe', 'Japanese Zucchini and Onions');
+insert into favorites values ('Phoebe', 'Baby Blue Punch');
+insert into favorites values ('Phoebe', 'Black Bean Hummus');
+update recipes set rating = 1 where recipe_name in ('Uglies', 'Japanese Zucchini and Onions', 'Baby Blue Punch', 'Black Bean Hummus');

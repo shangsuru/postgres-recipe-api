@@ -1,5 +1,6 @@
 const express = require('express')
 const multer = require('multer')
+const auth = require('../middleware/auth')
 const pool = require('../db/connection')
 const router = new express.Router()
 
@@ -25,7 +26,8 @@ var upload = multer({
   }
 })
 
-router.get('/', (request, response) => {
+// get all recipes
+router.get('/', auth, (request, response) => {
   const query = request.query.q
   const offset = (request.query.page - 1) * 15
   pool.query(
@@ -41,7 +43,8 @@ router.get('/', (request, response) => {
   )
 })
 
-router.get('/:title', (request, response) => {
+// get recipe detail
+router.get('/:title', auth, (request, response) => {
   const title = request.params.title
   pool.query(
     'select * from recipes where recipe_name = $1',
@@ -70,7 +73,8 @@ router.get('/:title', (request, response) => {
   )
 })
 
-router.get('/category/:category', (request, response) => {
+// get recipes per category
+router.get('/category/:category', auth, (request, response) => {
   const category = request.params.category
   const offset = (request.query.page - 1) * 15
   pool.query(
@@ -86,7 +90,8 @@ router.get('/category/:category', (request, response) => {
   )
 })
 
-router.post('/recipes', (request, response) => {
+// add a recipe
+router.post('/recipes', auth, (request, response) => {
   const {
     recipe_name,
     instructions,
@@ -119,7 +124,8 @@ router.post('/recipes', (request, response) => {
   )
 })
 
-router.post('/image', upload.single('upload'), (request, response) => {
+// add an image to a recipe
+router.post('/image', auth, upload.single('upload'), (request, response) => {
   const imageName = request.file.filename
   const recipeTitle = request.query.recipe
   pool.query(
