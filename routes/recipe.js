@@ -1,10 +1,11 @@
 const express = require('express')
+const path = require('path')
 const auth = require('../middleware/auth')
 const pool = require('../db/connection')
 const router = new express.Router()
 const upload = require('../middleware/upload')
 
-// get all recipes
+// get all recipes for given query
 router.get('/', auth, (request, response) => {
   const query = request.query.q
   const offset = (request.query.page - 1) * 15
@@ -38,7 +39,12 @@ router.post('/image', auth, upload.single('upload'), (request, response) => {
   )
 })
 
-// router.get('/image/:name')
+router.get('/image/:name', auth, (request, response) => {
+  const image = request.params.name
+  response.sendFile(
+    path.join(__dirname, '../public/images', image)
+  )
+})
 
 // get recipe detail
 router.get('/:title', auth, (request, response) => {
