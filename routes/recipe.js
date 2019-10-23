@@ -1,30 +1,8 @@
 const express = require('express')
-const multer = require('multer')
 const auth = require('../middleware/auth')
 const pool = require('../db/connection')
 const router = new express.Router()
-
-var storage = multer.diskStorage({
-  destination: function(req, file, cb) {
-    cb(null, 'public/images')
-  },
-  filename: function(req, file, cb) {
-    cb(null, Date.now() + '.jpg')
-  }
-})
-
-var upload = multer({
-  storage: storage,
-  limits: {
-    fileSize: 1000000
-  },
-  fileFilter(req, file, cb) {
-    if (!file.originalname.match(/\.(jpg|png|jpeg)$/)) {
-      return cb(new Error('Please upload an image'))
-    }
-    cb(undefined, true)
-  }
-})
+const upload = require('../middleware/upload')
 
 // get all recipes
 router.get('/', auth, (request, response) => {
@@ -42,6 +20,25 @@ router.get('/', auth, (request, response) => {
     }
   )
 })
+
+// add an image to a recipe
+router.post('/image', auth, upload.single('upload'), (request, response) => {
+  const imageName = request.file.filename
+  const recipeName = request.query.recipe
+  pool.query(
+    'update recipes set recipe_img = $1 where recipe_name = $2',
+    [imageName, recipeName],
+    (error, results) => {
+      if (error) {
+        response.status(400).send()
+      } else {
+        response.status(201).send('picture added')
+      }
+    }
+  )
+})
+
+// router.get('/image/:name')
 
 // get recipe detail
 router.get('/:title', auth, (request, response) => {
@@ -117,26 +114,9 @@ router.post('/', auth, (request, response) => {
               }
             }
           )
-        } 
+        }
 
         response.status(201).send(`recipe added`)
-      }
-    }
-  )
-})
-
-// add an image to a recipe
-router.post('/image', auth, upload.single('upload'), (request, response) => {
-  const imageName = request.file.filename
-  const recipeTitle = request.query.recipe
-  pool.query(
-    'update recipes set recipe_img = $1 where recipe_name = $2',
-    [imageName, recipeTitle],
-    (error, results) => {
-      if (error) {
-        response.status(400).send()
-      } else {
-        response.status(201).send('picture added')
       }
     }
   )
