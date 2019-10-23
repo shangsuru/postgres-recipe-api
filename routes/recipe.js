@@ -35,7 +35,7 @@ router.get('/', auth, (request, response) => {
     ['%' + query + '%', offset],
     (error, results) => {
       if (error) {
-        console.log(error)
+        response.status(400).send()
       } else {
         response.status(200).json(results.rows)
       }
@@ -51,7 +51,7 @@ router.get('/:title', auth, (request, response) => {
     [title],
     (error, results) => {
       if (error) {
-        console.log(error)
+        response.status(400).send()
       } else {
         let recipe = results.rows[0]
         pool.query(
@@ -59,7 +59,7 @@ router.get('/:title', auth, (request, response) => {
           [title],
           (error, results) => {
             if (error) {
-              console.log(error)
+              response.status(400).send()
             } else {
               let ingredientsList = []
               results.rows.forEach(e => ingredientsList.push(e.ingredient))
@@ -82,7 +82,7 @@ router.get('/category/:category', auth, (request, response) => {
     [category, offset],
     (error, results) => {
       if (error) {
-        console.log(error)
+        response.status(400).send()
       } else {
         response.status(200).json(results.rows)
       }
@@ -91,32 +91,33 @@ router.get('/category/:category', auth, (request, response) => {
 })
 
 // add a recipe
-router.post('/recipes', auth, (request, response) => {
+router.post('/', auth, (request, response) => {
   const {
     recipe_name,
     instructions,
     author,
     prep_time,
-    ingredients
+    ingredients,
+    category
   } = request.body
   pool.query(
-    'insert into recipes (recipe_name, instructions, author, prep_time) values ($1, $2, $3, $4, $5)',
-    [recipe_name, instructions, author, prep_time],
+    'insert into recipes (recipe_name, instructions, author, prep_time, category) values ($1, $2, $3, $4, $5)',
+    [recipe_name, instructions, author, prep_time, category],
     (error, results) => {
       if (error) {
-        console.log(error)
+        response.status(400).send()
       } else {
         for (let i = 0; i < ingredients.length; i++) {
           pool.query(
-            'insert into ingredients (recipe_name, ingredient, amount) values ($1, $2, $3)',
-            [recipe_name, ingredient[i]],
+            'insert into ingredients values ($1, $2)',
+            [recipe_name, ingredients[i]],
             (error, results) => {
               if (error) {
-                throw error
+                response.status(400).send()
               }
             }
           )
-        }
+        } 
 
         response.status(201).send(`recipe added`)
       }
@@ -133,7 +134,7 @@ router.post('/image', auth, upload.single('upload'), (request, response) => {
     [imageName, recipeTitle],
     (error, results) => {
       if (error) {
-        console.log(error)
+        response.status(400).send()
       } else {
         response.status(201).send('picture added')
       }

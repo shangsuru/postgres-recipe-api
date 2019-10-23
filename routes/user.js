@@ -30,7 +30,7 @@ router.post('/login', async (request, response) => {
     (error, results) => {
       try {
         if (results.rows.length === 0) {
-          throw error
+          response.status(401).send()
         }
         const { username, userpassword } = results.rows[0]
         // check password
@@ -39,7 +39,7 @@ router.post('/login', async (request, response) => {
           userpassword
         )
         if (!correctPassword) {
-          throw error
+          response.status(401).send()
         }
         // generate auth token
         const token = jwt.sign({ username }, process.env.JWT_SECRET)
@@ -58,7 +58,7 @@ router.get('/recipes', auth, async (request, response) => {
     [request.username],
     (error, results) => {
       if (error) {
-        console.log(error)
+        response.status(400).send()
       } else {
         response.status(200).json(results.rows)
       }
@@ -73,7 +73,7 @@ router.get('/favorites', auth, async (request, response) => {
     [request.username],
     (error, results) => {
       if (error) {
-        console.log(error)
+        response.status(400).send()
       } else {
         response.status(200).json(results.rows)
       }
