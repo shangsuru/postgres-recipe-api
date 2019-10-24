@@ -15,8 +15,12 @@ router.post('/signup', async (request, response) => {
     'insert into users values ($1, $2)',
     [username, hashedPassword],
     (error, results) => {
-      const token = jwt.sign({ username }, process.env.JWT_SECRET)
-      response.status(201).send({ username, token })
+      if (error) {
+        response.status(403).send()
+      } else {
+        const token = jwt.sign({ username }, process.env.JWT_SECRET)
+        response.status(201).send({ username, token })
+      }
     }
   )
 })
