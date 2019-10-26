@@ -18,7 +18,9 @@ router.post('/signup', async (request, response) => {
       if (error) {
         response.status(403).send()
       } else {
-        const token = jwt.sign({ username }, process.env.JWT_SECRET)
+        const token = jwt.sign({ username }, process.env.JWT_SECRET, {
+          expiresIn: '12h'
+        })
         response.status(201).send({ username, token })
       }
     }
@@ -46,7 +48,9 @@ router.post('/login', async (request, response) => {
           response.status(401).send()
         }
         // generate auth token
-        const token = jwt.sign({ username }, process.env.JWT_SECRET)
+        const token = jwt.sign({ username }, process.env.JWT_SECRET, {
+          expiresIn: '12h'
+        })
         response.status(201).send({ username, token })
       } catch (e) {
         response.status(400).send()
