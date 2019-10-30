@@ -72,11 +72,11 @@ router.post('/', auth, (request, response) => {
   const {
     recipe_name,
     instructions,
+    recipe_img,
     author,
     prep_time,
     ingredients,
-    category,
-    recipe_img
+    category
   } = request.body
   pool.query(
     'insert into recipes (recipe_name, instructions, recipe_img, author, prep_time, category) values ($1, $2, $3, $4, $5, $6)',
@@ -98,6 +98,21 @@ router.post('/', auth, (request, response) => {
         }
 
         response.status(201).send(`recipe added`)
+      }
+    }
+  )
+})
+
+router.patch('/:title', auth, (request, response) => {
+  const title = request.params.title
+  pool.query(
+    'update recipes set rating = rating + 1 where recipe_name = $1',
+    [title],
+    (error, results) => {
+      if (error) {
+        response.status(204).send()
+      } else {
+        response.status(200).send()
       }
     }
   )
