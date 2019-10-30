@@ -1,9 +1,7 @@
 const express = require('express')
-const path = require('path')
 const auth = require('../middleware/auth')
 const pool = require('../db/connection')
 const router = new express.Router()
-const upload = require('../middleware/upload')
 
 // get all recipes for given query
 router.get('/', auth, (request, response) => {
@@ -19,30 +17,6 @@ router.get('/', auth, (request, response) => {
         response.status(200).json(results.rows)
       }
     }
-  )
-})
-
-// add an image to a recipe
-router.post('/image', auth, upload.single('upload'), (request, response) => {
-  const imageName = request.file.filename
-  const recipeName = request.query.recipe
-  pool.query(
-    'update recipes set recipe_img = $1 where recipe_name = $2',
-    [imageName, recipeName],
-    (error, results) => {
-      if (error) {
-        response.status(400).send()
-      } else {
-        response.status(201).send('picture added')
-      }
-    }
-  )
-})
-
-router.get('/image/:name', auth, (request, response) => {
-  const image = request.params.name
-  response.sendFile(
-    path.join(__dirname, '../public/images', image)
   )
 })
 
@@ -101,11 +75,12 @@ router.post('/', auth, (request, response) => {
     author,
     prep_time,
     ingredients,
-    category
+    category,
+    recipe_img
   } = request.body
   pool.query(
-    'insert into recipes (recipe_name, instructions, author, prep_time, category) values ($1, $2, $3, $4, $5)',
-    [recipe_name, instructions, author, prep_time, category],
+    'insert into recipes (recipe_name, instructions, recipe_img, author, prep_time, category) values ($1, $2, $3, $4, $5, $6)',
+    [recipe_name, instructions, recipe_img, author, prep_time, category],
     (error, results) => {
       if (error) {
         response.status(400).send()
