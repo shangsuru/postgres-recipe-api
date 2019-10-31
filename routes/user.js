@@ -89,4 +89,21 @@ router.get('/favorites', auth, async (request, response) => {
   )
 })
 
+// add a liked recipe to favorites
+router.post('/favorites', auth, async (request, response) => {
+  const username = request.body.username
+  const recipe = request.body.recipe
+  pool.query(
+    'insert into favorites values ($1, $2)',
+    [username, recipe],
+    (error, results) => {
+      if (error) {
+        response.status(204).send()
+      } else {
+        response.status(200).send()
+      }
+    }
+  )
+})
+
 module.exports = router

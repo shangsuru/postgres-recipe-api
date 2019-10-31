@@ -4,7 +4,7 @@ const pool = require('../db/connection')
 const router = new express.Router()
 
 // get all recipes for given query
-router.get('/', auth, (request, response) => {
+router.get('/', auth, async (request, response) => {
   const query = request.query.q
   const offset = (request.query.page - 1) * 15
   pool.query(
@@ -21,7 +21,7 @@ router.get('/', auth, (request, response) => {
 })
 
 // get recipe detail
-router.get('/:title', auth, (request, response) => {
+router.get('/:title', auth, async (request, response) => {
   const title = request.params.title
   pool.query(
     'select * from recipes where recipe_name = $1',
@@ -51,7 +51,7 @@ router.get('/:title', auth, (request, response) => {
 })
 
 // get recipes per category
-router.get('/category/:category', auth, (request, response) => {
+router.get('/category/:category', auth, async (request, response) => {
   const category = request.params.category
   const offset = (request.query.page - 1) * 15
   pool.query(
@@ -68,7 +68,7 @@ router.get('/category/:category', auth, (request, response) => {
 })
 
 // add a recipe
-router.post('/', auth, (request, response) => {
+router.post('/', auth, async (request, response) => {
   const {
     recipe_name,
     instructions,
@@ -103,7 +103,7 @@ router.post('/', auth, (request, response) => {
   )
 })
 
-router.patch('/:title', auth, (request, response) => {
+router.patch('/:title', auth, async (request, response) => {
   const title = request.params.title
   pool.query(
     'update recipes set rating = rating + 1 where recipe_name = $1',

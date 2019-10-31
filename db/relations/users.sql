@@ -4,5 +4,6 @@ create table if not exists users (
 );
 create table if not exists favorites (
   username varchar(60) references users(username) on delete cascade,
-  recipe text references recipes(recipe_name) on delete cascade
+  recipe text references recipes(recipe_name) on delete cascade,
+  primary key (username, recipe)
 );
