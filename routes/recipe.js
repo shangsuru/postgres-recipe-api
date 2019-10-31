@@ -10,7 +10,7 @@ router.get('/', auth, async (request, response) => {
   const query = request.query.q
   const offset = (request.query.page - 1) * elementsPerPage
   pool.query(
-    `select recipe_name, rating, recipe_img, prep_time from recipes where lower(recipe_name) like lower($1) limit ${elementsPerPage} offset $2`,
+    `select recipe_name, rating, recipe_img, prep_time from recipes where lower(recipe_name) like lower($1) limit ${elementsPerPage} offset $2 order by rating desc`,
     ['%' + query + '%', offset],
     (error, results) => {
       if (error) {
@@ -57,7 +57,7 @@ router.get('/category/:category', auth, async (request, response) => {
   const category = request.params.category
   const offset = (request.query.page - 1) * elementsPerPage
   pool.query(
-    `select recipe_name, rating, recipe_img, prep_time from recipes where category = $1 limit ${elementsPerPage}  offset $2`,
+    `select recipe_name, rating, recipe_img, prep_time from recipes where category = $1 limit ${elementsPerPage}  offset $2 order by rating desc`,
     [category, offset],
     (error, results) => {
       if (error) {
