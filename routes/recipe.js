@@ -105,9 +105,10 @@ router.post('/', auth, async (request, response) => {
 
 router.patch('/:title', auth, async (request, response) => {
   const title = request.params.title
+  const amount = request.body.amount
   pool.query(
-    'update recipes set rating = rating + 1 where recipe_name = $1',
-    [title],
+    'update recipes set rating = rating + $1 where recipe_name = $2',
+    [amount, title],
     (error, results) => {
       if (error) {
         response.status(204).send()

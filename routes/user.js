@@ -106,4 +106,21 @@ router.post('/favorites', auth, async (request, response) => {
   )
 })
 
+// remove a recipe from favorites
+router.delete('/favorites', auth, async (request, response) => {
+  const username = request.body.username
+  const recipe = request.body.recipe
+  pool.query(
+    'delete from favorites where username=$1 AND recipe=$2',
+    [username, recipe],
+    (error, results) => {
+      if (error) {
+        response.status(204).send()
+      } else {
+        response.status(200).send()
+      }
+    }
+  )
+})
+
 module.exports = router
